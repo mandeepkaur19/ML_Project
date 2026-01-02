@@ -1,0 +1,28 @@
+name: Build and Push Docker Image to ACR
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Login to Azure Container Registry
+        run: az acr login --name testman
+
+      - name: Build Docker image
+        run: docker build -t testman.azurecr.io/studentp:latest .
+
+      - name: Push Docker image
+        run: docker push testman.azurecr.io/studentp:latest
